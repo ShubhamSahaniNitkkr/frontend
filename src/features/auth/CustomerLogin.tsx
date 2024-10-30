@@ -5,6 +5,7 @@ import {
   Animated,
   Image,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -21,6 +22,7 @@ import CustomInput from '@components/ui/CustomInput';
 import CustomButton from '@components/ui/CustomButton';
 import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
+import {customerLogin} from '@service/authService';
 
 const gradientColors = [...lightColors].reverse();
 
@@ -60,7 +62,18 @@ const CustomerLogin = () => {
   };
 
   const handleLoginAPI = async () => {
-    // API logic
+    setLoading(true);
+    try {
+      await customerLogin(phone);
+      resetAndNavigate('ProductDashboard');
+    } catch (error) {
+      Alert.alert(
+        'Login Failed',
+        'Please check your phone number and try again.',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
