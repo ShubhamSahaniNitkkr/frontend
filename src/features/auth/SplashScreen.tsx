@@ -42,7 +42,7 @@ const SplashScreen: FC = () => {
       if (decodedAccessToken?.exp < currenTime) {
         try {
           refreshTokenFn();
-          // await refetchUserFn(setUser);
+          await refetchUserFn(setUser);
         } catch (error) {
           console.log(error);
           Alert.alert('Error while refreshing token');
