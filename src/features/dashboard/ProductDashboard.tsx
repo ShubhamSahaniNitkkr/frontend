@@ -1,9 +1,15 @@
-import {View, Text, Animated as RAnimated} from 'react-native';
+import {View, Text, Animated as RAnimated, StyleSheet} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import NoticeAnimation from './NoticeAnimation';
 import {NoticeHeight} from '@utils/Scaling';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Visuals from './Visuals';
+import RainyVisuals from './RainyVisuals';
+import {
+  CollapsibleContainer,
+  CollapsibleHeaderContainer,
+  withCollapsibleContext,
+} from '@r0b0t3d/react-native-collapsible';
+import AnimatedHeader from './AnimatedHeader';
 
 const NOTICE_HEIGHT = -(NoticeHeight + 12);
 
@@ -12,7 +18,7 @@ const ProductDashboard = () => {
 
   const slideUp = () => {
     RAnimated.timing(noticePosition, {
-      toValue: NOTICE_HEIGHT + 12,
+      toValue: NOTICE_HEIGHT,
       duration: 800,
       useNativeDriver: false,
     }).start();
@@ -37,13 +43,34 @@ const ProductDashboard = () => {
   return (
     <NoticeAnimation noticePosition={noticePosition}>
       <>
-        <Visuals />
-        <SafeAreaView>
-          <Text>ProductDashboard</Text>
-        </SafeAreaView>
+        <RainyVisuals />
+        <SafeAreaView />
+        <CollapsibleContainer style={styles.panelContainer}>
+          <CollapsibleHeaderContainer containerStyle={styles.transparent}>
+            <AnimatedHeader
+              showNotice={() => {
+                slideDown();
+                const timeoutId = setTimeout(() => {
+                  slideUp();
+                }, 3500);
+                return () => clearTimeout(timeoutId);
+              }}
+            />
+          </CollapsibleHeaderContainer>
+        </CollapsibleContainer>
       </>
     </NoticeAnimation>
   );
 };
 
-export default ProductDashboard;
+const styles = StyleSheet.create({
+  panelContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  transparent: {
+    backgroundColor: 'transparent',
+  },
+});
+
+export default withCollapsibleContext(ProductDashboard);
